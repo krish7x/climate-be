@@ -14,17 +14,17 @@ authRoute.post('/signup', [
         .isLength({
         min: 3
     })
-        .withMessage('Please provide a name'),
+        .withMessage('Please provide a name with a minimum length of 3'),
     (0, express_validator_1.check)('email').isEmail().withMessage('Please provide a valid E-Mail!'),
     (0, express_validator_1.check)('password')
         .isLength({ min: 6 })
-        .withMessage('Password length should be minimum of 8 characters')
+        .withMessage('Password length should be minimum of 6 characters')
 ], auth_1.signup);
 authRoute.post('/signin', [
     (0, express_validator_1.check)('email').isEmail().withMessage('Please provide a valid E-Mail!'),
     (0, express_validator_1.check)('password')
         .isLength({ min: 6 })
-        .withMessage('Password length should be minimum of 8 characters')
+        .withMessage('Password length should be minimum of 6 characters')
 ], auth_1.signin);
 authRoute.get('/signout', auth_1.signout);
 //# sourceMappingURL=auth.js.map

@@ -11,11 +11,11 @@ authRoute.post(
 			.isLength({
 				min: 3
 			})
-			.withMessage('Please provide a name'),
+			.withMessage('Please provide a name with a minimum length of 3'),
 		check('email').isEmail().withMessage('Please provide a valid E-Mail!'),
 		check('password')
 			.isLength({ min: 6 })
-			.withMessage('Password length should be minimum of 8 characters')
+			.withMessage('Password length should be minimum of 6 characters')
 	],
 	signup
 )
@@ -25,7 +25,7 @@ authRoute.post(
 		check('email').isEmail().withMessage('Please provide a valid E-Mail!'),
 		check('password')
 			.isLength({ min: 6 })
-			.withMessage('Password length should be minimum of 8 characters')
+			.withMessage('Password length should be minimum of 6 characters')
 	],
 	signin
 )
