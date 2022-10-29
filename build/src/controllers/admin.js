@@ -31,9 +31,9 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             error: (_a = errors.array()[0]) === null || _a === void 0 ? void 0 : _a.msg
         });
     }
-    const { name, email, phoneNumber = null, password, dateOfBirth, companyId } = req.body;
+    const { name, email, phoneNumber = null, password, dateOfBirth } = req.body;
     try {
-        yield index_1.prisma.user
+        yield index_1.prisma.admin
             .create({
             data: {
                 name,
@@ -42,20 +42,19 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 dateOfBirth: (0, dayjs_1.default)(dateOfBirth, 'DD/MM/YYYY').format('DD/MM/YYYY') || null,
                 age: (0, dayjs_1.default)().get('year') -
                     (0, dayjs_1.default)(dateOfBirth, 'DD/MM/YYYY').get('year') || null,
-                companyId: +companyId,
                 encrypted_password: (0, auth_2.hashPassword)(password, process.env.SALT || 'climate-be')
             }
         })
-            .then(user => {
+            .then(admin => {
             return res.status(statusCode_1.statusCode.OK).json({
-                message: 'User signed up, successfully!',
-                data: user
+                message: 'Admin signed up, successfully!',
+                data: admin
             });
         })
             .catch(err => {
             (0, logger_1.loggerUtil)(err, 'ERROR');
             return res.status(statusCode_1.statusCode.BAD_REQUEST).json({
-                error: 'Failed to add user in DB!'
+                error: 'Failed to add admin in DB!'
             });
         });
     }
@@ -63,7 +62,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         (0, logger_1.loggerUtil)(err, 'ERROR');
     }
     finally {
-        (0, logger_1.loggerUtil)(`Sign up API called by user - ${email}`);
+        (0, logger_1.loggerUtil)(`Sign up API called by admin - ${email}`);
     }
 });
 exports.signup = signup;
@@ -77,19 +76,19 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const { email, password } = req.body;
     try {
-        yield index_1.prisma.user
+        yield index_1.prisma.admin
             .findUnique({
             where: {
                 email
             }
         })
-            .then(user => {
-            if (!user) {
+            .then(admin => {
+            if (!admin) {
                 return res.status(statusCode_1.statusCode.NOT_FOUND).json({
                     error: "E-Mail doesn't exist in DB!"
                 });
             }
-            if (!(0, auth_1.authenticate)(password, process.env.SALT || '', user.encrypted_password)) {
+            if (!(0, auth_1.authenticate)(password, process.env.SALT || '', admin.encrypted_password)) {
                 return res.status(statusCode_1.statusCode.UNAUTHORIZED).json({
                     error: 'Oops!, E-mail and Password does not match!'
                 });
@@ -97,15 +96,15 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const expiryTime = new Date();
             expiryTime.setMonth(expiryTime.getMonth() + 6);
             const exp = expiryTime.getTime() / 1000;
-            const token = jsonwebtoken_1.default.sign({ _id: user.id, exp: exp }, process.env.SECRET || '');
+            const token = jsonwebtoken_1.default.sign({ _id: admin.id, exp: exp }, process.env.SECRET || '');
             res.cookie('Token', token, {
                 expires: new Date(Date.now() + 900000),
                 httpOnly: true
             });
             return res.status(statusCode_1.statusCode.OK).json({
-                message: 'User Logged in Successfully!',
+                message: 'Admin Logged in Successfully!',
                 token,
-                data: user
+                data: admin
             });
         })
             .catch(err => {
@@ -119,15 +118,15 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         (0, logger_1.loggerUtil)(err, 'ERROR');
     }
     finally {
-        (0, logger_1.loggerUtil)(`Sign in API called by user - ${email}`);
+        (0, logger_1.loggerUtil)(`Sign in API called by admin - ${email}`);
     }
 });
 exports.signin = signin;
 const signout = (res) => {
     res.clearCookie('Token');
     res.status(statusCode_1.statusCode.OK).json({
-        message: 'User Signed Out Sucessfully!'
+        message: 'Admin Signed Out Sucessfully!'
     });
 };
 exports.signout = signout;
-//# sourceMappingURL=auth.js.map
+//# sourceMappingURL=admin.js.map

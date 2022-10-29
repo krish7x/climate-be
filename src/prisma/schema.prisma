@@ -7,15 +7,50 @@ datasource db {
   url      = env("PRISMA_DB_URL")
 }
 
+model Company {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  address   String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+  users     User[]
+  sites     Site[]
+}
+
 model User {
-  id                 Int       @id @default(autoincrement())
+  id                 Int           @id @default(autoincrement())
   name               String
-  email              String    @unique
-  phoneNumber        String?   @unique
+  email              String        @unique
+  phoneNumber        String?       @unique
   dateOfBirth        String?
   age                Int?
-  gender             String?
   encrypted_password String
-  role               String?   @default("USER")
-  createdAt          DateTime? @default(now())
+  role               String?       @default("USER")
+  createdAt          DateTime?     @default(now())
+  updatedAt          DateTime?     @default(now())
+  company            Company       @relation(fields: [companyId], references: [id])
+  companyId          Int
+  SiteMapping        SiteMapping[]
+}
+
+model Site {
+  id          Int           @id @default(autoincrement())
+  name        String
+  geoLocation String?
+  createdAt   DateTime?     @default(now())
+  updatedAt   DateTime?     @default(now())
+  company     Company       @relation(fields: [companyId], references: [id])
+  companyId   Int
+  SiteMapping SiteMapping[]
+}
+
+model SiteMapping {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+  site      Site      @relation(fields: [siteId], references: [id])
+  siteId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
 }

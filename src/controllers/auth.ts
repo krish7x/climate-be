@@ -17,7 +17,14 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
 			error: errors.array()[0]?.msg
 		})
 	}
-	const { name, email, phoneNumber = null, password, dateOfBirth } = req.body
+	const {
+		name,
+		email,
+		phoneNumber = null,
+		password,
+		dateOfBirth,
+		companyId
+	} = req.body
 	try {
 		await prisma.user
 			.create({
@@ -30,7 +37,7 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
 					age:
 						dayjs().get('year') -
 							dayjs(dateOfBirth, 'DD/MM/YYYY').get('year') || null,
-					gender: req.body?.gender,
+					companyId: +companyId,
 					encrypted_password: hashPassword(
 						password,
 						process.env.SALT || 'climate-be'
@@ -39,7 +46,7 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
 			})
 			.then(user => {
 				return res.status(SC.OK).json({
-					message: 'User Signed Up, Successfully!',
+					message: 'User signed up, successfully!',
 					data: user
 				})
 			})
