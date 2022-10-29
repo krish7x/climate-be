@@ -33,4 +33,7 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     (0, logger_1.loggerUtil)(`Listening on port ${PORT}`, 'SERVER');
 });
+app.get('/api', (_, res) => {
+    res.send('hello');
+});
 //# sourceMappingURL=server.js.map

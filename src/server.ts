@@ -45,3 +45,8 @@ const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {
 	logger(`Listening on port ${PORT}`, 'SERVER')
 })
+
+//testing
+app.get('/api', (_, res) => {
+	res.send('hello')
+})
